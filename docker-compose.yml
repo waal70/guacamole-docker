@@ -67,6 +67,10 @@ services:
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - db_ng
+    networks:
+      - nginx_backend
+      - web_frontend
+
   db_ng:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx_db
@@ -78,6 +82,9 @@ services:
       MYSQL_PASSWORD: 'npm'
     volumes:
       - ./data_ng/mysql:/var/lib/mysql
+    networks:
+      - nginx_backend
+
   guacd:
     image: guacamole/guacd:latest
     container_name: guacd
@@ -86,12 +93,16 @@ services:
       - no-new-privileges:true
     depends_on:
       - app
+    networks:
+      - guac_backend
 
   init-guac-db:
     image: guacamole/guacamole:latest
     command: ["/bin/sh", "-c", "test -e /init/initdb.sql && echo 'init file already exists' || /opt/guacamole/bin/initdb.sh --mysql > /init/initdb.sql" ]
     volumes:
       - ${BASE:-~}guac:/init
+    networks:
+      - guac_backend
 
   db:
     image: 'mariadb:latest'
@@ -107,6 +118,8 @@ services:
       - ${BASE:-~}guac/initdb.sql:/docker-entrypoint-initdb.d/init.sql
     depends_on:
       - init-guac-db
+    networks:
+      - guac_backend
 
   guac:
     image: guacamole/guacamole:latest
@@ -127,3 +140,11 @@ services:
     depends_on:
       - db
       - guacd
+    networks:
+      - web_frontend
+      - guac_backend
+
+networks:
+  web_frontend:
+  nginx_backend:
+  guac_backend:
