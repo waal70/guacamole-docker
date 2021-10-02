@@ -1,3 +1,39 @@
+####################################################################################
+# docker-compose file for Guacamole, using nginx
+# created by waal70 02-10-2021
+#
+# Apache Guacamole is a clientless remote desktop gateway. It supports standard
+# protocols like VNC, RDP, and SSH. We call it clientless because no plugins or
+# client software are required. Thanks to HTML5, once Guacamole is installed on
+# a server, all you need to access your desktops is a web browser.
+####################################################################################
+#
+# What does this file do?
+#
+# docker-compose up guac-init-db:
+#  Create the database population script, for use in the creation of the database
+#
+# docker-compose up -d
+#  - Create and run a container for guacd - the utility for guacamole
+#  - Create and run a MySQL (mariadb) database, using the population script to init
+#  - Create and run a guacamole container, pointing it to guacd and mariadb
+# Please note that this container expects a reverse proxy to handle it, so there is
+# no way to use the :8080 interface, unless you inspect docker to see what port
+# it has mapped this to and use that to interact with the docker instance
+#  - Link all containers to the pre-existing nginx-default network
+#  - To create the nginx docker, please see the relevant other scripts in this
+#       repo
+#
+# The initial login to the guacamole webinterface is:
+#
+#     Username: guacadmin
+#     Password: guacadmin
+#
+# Make sure you change it immediately!
+#
+# version            date              comment
+# 1.0                2021-10-01        initial release
+####################################################################################
 version: '3'
 
 services:
