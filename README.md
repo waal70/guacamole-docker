@@ -2,6 +2,11 @@
 Repository for docker-compose scripts
 
 ### Preparation
+```mkdir guac```
+and
+```cd guac```
+git clone this repository, ending with '.' to adopt the name guac
+
 Change:
 ```env```
 to
@@ -57,11 +62,3 @@ be automatically ran. This will complete our initialization of the database.
       - guacd
 ```
 Because we are putting an nginx in front of guacamole, the VIRTUAL HOST need not be specified.
-```
-networks:
-  default:
-    external: true
-    name: nginx_default
-```
-Here we are pointing to the network that was created in the docker-compose for nginx, so that the containers may interact among themselves.
-What could be a TODO is to create one huge stack, that will also include the nginx install.
