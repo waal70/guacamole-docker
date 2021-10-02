@@ -1,3 +1,54 @@
+####################################################################################
+# docker-compose file for nginx proxy manager, to front guacamole
+# created by waal70 02-10-2021
+#
+# Check: https://nginxproxymanager.com/guide/#project-goal
+# ####################################################################################
+#
+# What does this file do?
+#
+# docker-compose up -d
+#  - Create and run a container for nginx proxy manager - the web UI for nginx
+#  - Create and run a MySQL (mariadb) database, using the aria storage provider
+#  - Prepare some volumes, among others for letsencrypt support
+#
+# The initial login to the webinterface (hosted on port 81) is:
+#
+#   Email:    admin@example.com
+#   Password: changeme
+#   
+# You will be asked to change this after initial login.
+# Once up and running, use the following hints to configure a reverse proxy:
+# use nginx proxy manager to create new proxy host
+#
+# set block common exploits
+# set websockets support
+# optionally add access list
+# 
+# forward to guac:8080 (this is the instance that is created in the main yaml)
+#
+# in Custom Locations
+# Add /
+# forward to guac:8080
+# press the options wheel and add in the custom config, to have it map to the root:
+#location / {
+# proxy_pass http://guac:8080/guacamole/;
+# proxy_redirect off;
+# proxy_buffering off;
+# proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+# proxy_set_header Upgrade $http_upgrade;
+# proxy_set_header Connection $http_connection;
+# proxy_cookie_path /guacamole/ /;
+# access_log off;
+# }
+ 
+# in SSL tab request new certificate from letsencrypt
+# Force SSL, HSTS, HTTP/2
+# 
+#
+# version            date              comment
+# 1.0                2021-10-01        initial release
+####################################################################################
 version: "3"
 services:
   app:
