@@ -2,6 +2,11 @@
 Repository for docker-compose scripts
 
 ### Preparation
+```mkdir guac```
+and
+```cd guac```
+git clone this repository, ending with '.' to adopt the name guac
+
 Change:
 ```env```
 to
