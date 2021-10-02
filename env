@@ -1,0 +1,6 @@
+###RENAME THIS TO .env AND SET VALUES ACCORDINGLY
+BASE=/yourdirectory/
+MYSQL_ROOT_PASSWORD=yourpasswordhere
+MYSQL_DATABASE=beinventive
+MYSQL_USER=beinventive
+MYSQL_PASSWORD=yourpasswordhere

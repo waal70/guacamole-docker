@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  init-guac-db:
+    image: guacamole/guacamole:latest
+    command: ["/bin/sh", "-c", "test -e /init/initdb.sql && echo 'init file already exists' || /opt/guacamole/bin/initdb.sh --mysql > /init/initdb.sql" ]
+    volumes:
+      - ${BASE:-~}guac:/init
+
+  db:
+    image: 'mariadb:latest'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ${BASE:-~}guac:/config
+      - ${BASE:-~}guac/initdb.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      - init-guac-db
+
+  guac:
+    image: guacamole/guacamole:latest
+    container_name: guac
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 8080/tcp
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: guac_db_1
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      VIRTUAL_HOST:
+    depends_on:
+      - db
+      - guacd
+networks:
+  default:
+    external: true
+    name: nginx_default
