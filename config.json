@@ -1,11 +1,10 @@
 {
   "database": {
     "engine": "mysql",
-    "host": "db",
+    "host": "nginx_db",
     "name": "npm",
     "user": "npm",
     "password": "npm",
     "port": 3306
   }
 }
-

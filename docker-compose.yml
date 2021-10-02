@@ -37,12 +37,55 @@
 version: '3'
 
 services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx_app
+    restart: unless-stopped
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+      # Public HTTPS Port:
+      - '443:443'
+      # Admin Web Port:
+      - '81:81'
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+    environment:
+      # These are the settings to access your db
+      DB_MYSQL_HOST: "nginx_db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # If you would rather use Sqlite uncomment this
+      # and remove all DB_MYSQL_* lines above
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data_ng:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db_ng
+  db_ng:
+    image: 'jc21/mariadb-aria:latest'
+    container_name: nginx_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - ./data_ng/mysql:/var/lib/mysql
   guacd:
     image: guacamole/guacd:latest
     container_name: guacd
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
+    depends_on:
+      - app
 
   init-guac-db:
     image: guacamole/guacamole:latest
@@ -84,7 +127,3 @@ services:
     depends_on:
       - db
       - guacd
-networks:
-  default:
-    external: true
-    name: nginx_default
