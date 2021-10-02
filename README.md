@@ -1,5 +1,5 @@
 # guacamole-docker
-Repository for docker-compose scripts
+Repository for the docker-compose script that installs guacamole
 
 ### Preparation
 ```mkdir guac```
