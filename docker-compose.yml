@@ -24,15 +24,28 @@
 #  - To create the nginx docker, please see the relevant other scripts in this
 #       repo
 #
+# Delete the database directories and issue:
+# sudo docker-compose down
+# Followed by:
+# sudo docker-compose up -d
+#
+# Bad Gateway in NGINX? Restart only the db container
+#
 # The initial login to the guacamole webinterface is:
 #
 #     Username: guacadmin
 #     Password: guacadmin
 #
+# The initial login to the NGINX instance is:
+#
+#     Username: admin@example.com
+#     Password: changeme
+#
 # Make sure you change it immediately!
 #
 # version            date              comment
 # 1.0                2021-10-01        initial release
+# 1.1				 2023-06-04		   improvements for newer versions
 ####################################################################################
 version: '3'
 
@@ -103,6 +116,8 @@ services:
       - ${BASE:-~}guac:/init
     networks:
       - guac_backend
+    #IF this does not work, use the following command line to create the initdb.sql:
+    # sudo docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --mysql > initdb.sql
 
   db:
     image: 'mariadb:latest'
@@ -128,7 +143,7 @@ services:
     security_opt:
       - no-new-privileges:true
     ports:
-      - 8080/tcp
+      - '49153:8080'
     environment:
       GUACD_HOSTNAME: guacd
       MYSQL_HOSTNAME: guac_db_1
